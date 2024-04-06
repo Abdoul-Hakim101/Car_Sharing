@@ -2,6 +2,7 @@ package carsharing;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
 
@@ -20,22 +21,86 @@ public class Main {
         displayMenu(companyDao, scanner);
 
     }
-
-
-    private static void printCompanies(CompanyDao company) {
-        List<Company> companies = company.get();
+    
+    private static void printCompanies(CompanyDao company, Scanner scanner) {
+        List<Company> companies = company.getCompanies();
         if (companies.isEmpty()) {
             System.out.println("\nThe company list is empty!");
         } else {
-            System.out.println("\nCompany list:");
-            companies.forEach(elm -> System.out.println(elm.ID() + ". " + elm.NAME()));
+
+            while (true) {
+                System.out.println("\nChoose the company: ");
+                companies.forEach(elm -> System.out.println(elm.ID() + ". " + elm.NAME()));
+                System.out.println("0. Back");
+                int userAction = scanner.nextInt();
+                scanner.nextLine();
+                if (userAction == 0) {
+                    break;
+                } else {
+                    boolean notFound = companies.stream().filter(company1 -> company1.ID() == userAction).findAny().isEmpty();
+
+                    if (notFound) {
+                        System.out.println("Wrong Company Id");
+                    } else {
+                        String name = companies.stream().filter(company1 -> company1.ID() == userAction).toList().get(0).NAME();
+                        int id = companies.stream().filter(company1 -> company1.ID() == userAction).toList().get(0).ID();
+                        System.out.printf("\n'%s' company%n", name);
+                        executeUserAction(scanner, company, id);
+                        break;
+                    }
+                }
+            }
+
         }
+    }
+
+    private static void executeUserAction(Scanner scanner, CompanyDao company, int id) {
+        boolean isRunning = true;
+        System.out.println("1. Car list\n2. Create a car\n0. Back");
+        do {
+            int userAction = scanner.nextInt();
+            scanner.nextLine();
+            switch (userAction) {
+                case 1:
+                    printCars(company, id);
+                    break;
+                case 2:
+                    addCar(company, scanner, id);
+                    break;
+                case 0:
+                    isRunning = false;
+                    break;
+                default:
+                    System.out.println("Invalid option, please try again.");
+            }
+            if (isRunning) {
+                System.out.println("\n1. Car list\n2. Create a car\n0. Back");
+            }
+        } while (isRunning);
+    }
+
+    private static void printCars(CompanyDao company, int id) {
+        List<String> cars = company.getCars(id);
+        if (cars.isEmpty()) {
+            System.out.println("\nThe car list is empty!\n");
+        } else {
+            System.out.println("\nCar list:");
+            AtomicInteger i = new AtomicInteger(1);
+            cars.forEach(car -> System.out.println(i.getAndIncrement() + ". " + car));
+        }
+    }
+
+    private static void addCar(CompanyDao companyDao, Scanner scanner, int id) {
+        System.out.println("\nEnter the car name:");
+        String name = scanner.nextLine();
+        companyDao.addCAr(name, id);
+        System.out.println("The car was added!");
     }
 
     private static void addCompany(CompanyDao companyDao, Scanner scanner) {
         System.out.println("\nEnter the company name:");
         String name = scanner.nextLine();
-        companyDao.add(name);
+        companyDao.addCompany(name);
         System.out.println("The company was created!");
     }
 
@@ -52,7 +117,7 @@ public class Main {
             scanner.nextLine();
             switch (userAction) {
                 case 1:
-                    printCompanies(company);
+                    printCompanies(company, scanner);
                     break;
                 case 2:
                     addCompany(company, scanner);
