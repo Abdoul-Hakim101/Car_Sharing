@@ -44,10 +44,6 @@ files:
           }
       }
     learner_created: false
-  - name: src/carsharing/db/carsharing.mv.db
-    visible: true
-    is_binary: true
-    learner_created: false
   - name: test/CarSharingTest.java
     visible: false
     text: |
@@ -603,6 +599,28 @@ files:
           }
       }
     learner_created: false
+  - name: src/carsharing/db/carsharing.mv.db
+    visible: true
+    learner_created: true
 feedback_link: https://hyperskill.org/learn/step/11503#comment
-status: Unchecked
+status: Failed
+feedback:
+  message: |-
+    Wrong answer in test #1
+
+    Can&#39;t find a database file. It should be named &#39;carsharing.mv.db&#39; and located in /carsharing/db/ folder.
+    The file should be created right after starting the program!
+
+    Please find below the output of your program during this failed test.
+    Note that the &#39;&gt;&#39; character indicates the beginning of the input line.
+
+    ---
+
+    Arguments: -databaseFileName carsharing
+
+    ClassNotFoundException | SQLException
+    1. Log in as a manager
+    0. Exit
+    &gt; 0
+  time: "Fri, 05 Apr 2024 23:44:54 UTC"
 record: -1
